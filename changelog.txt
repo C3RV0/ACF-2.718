@@ -1,4 +1,4 @@
 8/24/2020:
  - Project start
- - Adding comments to increase readability
- - Restructuring some code to increase readability
+ - Added comments and restructured "cl_acfsetpermission.lua" to increase readability
+ - Added comments in "cl_acfballistics.lua" to increase readability
