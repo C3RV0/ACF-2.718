@@ -1,4 +1,4 @@
-# ACF Rework (WIP)
+# ACF 2.718 (WIP)
 
 The Armoured Combat Framework was supposed to be a [Garry's Mod][] addon which creates a balanced, realistic and fun to play combat damage system, simulating projectiles, armor and explosions, as well as engines and gearboxes. However, it is still a bit buggy and is apparently a dead/dying project from what I've been told. In the interest of my server, I have decided to begin reworking this beloved addon to better function inside the mess that is the SOURCE ENGINE. If you have any feedback/criticism, I'd be more that happen to listen.
 
