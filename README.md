@@ -1,14 +1,11 @@
-# Armoured Combat Framework
+# ACF Rework (WIP)
 
-The Armoured Combat Framework is a [Garry's Mod][] addon which creates a balanced, realistic and fun to play combat damage system, simulating projectiles, armor and explosions, as well as engines and gearboxes.
+The Armoured Combat Framework was supposed to be a [Garry's Mod][] addon which creates a balanced, realistic and fun to play combat damage system, simulating projectiles, armor and explosions, as well as engines and gearboxes. However, it is still a bit buggy and is apparently a dead/dying project from what I've been told. In the interest of my server, I have decided to begin reworking this beloved addon to better function inside the mess that is the SOURCE ENGINE. If you have any feedback/criticism, I'd be more that happen to listen.
 
-IF YOU ARE HAVING INSTALLATION PROBLEMS, PLEASE POST ON THE FACEPUNCH ACF THREAD, NOT ON GITHUB.  Please only create an issue on github if you've found a bug, or have a suggestion.  The [FP forum ACF thread][] is a good place for general ACF conversation, suggestions, and help requests.
+For right now, it's probably best if you don't download it while it's in heavy construction. However if you do, please let me know of any bugs that you find. Also, I will gladly hear any (reasonable) suggestions.
 
-When submitting a new issue or suggestion to [ACF Issues][] page, please double-check that someone else hasn't brought it up yet. Be sure to check closed issues as well.  Common suggestions that have already come up are turbos, propellers, cannon sizes, and engines.
-
-Be sure to check out the [ACF Wiki][] for more ACF related information.
+The [ACF Wiki][] has a lot of helpful ACF related information, but I plan on making my own wiki and tutorials at a later date.
   
 [Garry's Mod]: <http://garrysmod.com/>
-[FP forum ACF thread]: <https://facepunch.com/showthread.php?t=1548397>
-[ACF Issues]: <https://github.com/nrlulz/ACF/issues>
+[ACF Issues]: <https://github.com/C3RV0/ACF/issues>
 [ACF Wiki]: <https://github.com/nrlulz/ACF/wiki>
