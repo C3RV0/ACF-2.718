@@ -1,31 +1,67 @@
-
+--[[
+	This is the menu gui for damage permission.
+	It is currently found in the Utilities tooltab, but I plan on moving it to its own separate tab.
+	The variable names are pretty self-explanatory, but I added a few extra comments just in case. Planning on adding a few more later on.
+]]--
 
 local Menu = {}
 
-// the category the menu goes under
+-- The category the menu goes under
 Menu.Category = "ACF"
 
 
-// the name of the item 
+-- The name of the item 
 Menu.Name = "Set Permission Mode"
 
-// the convar to execute when the player clicks on the tab
+-- The convar to execute when the player clicks on the tab
 Menu.Command = ""
 
 
 
 local Permissions = {}
 
+-- Empty table for all existing Damage Permission Modes
 local PermissionModes = {}
+
 local CurrentPermission = "default"
-local DefaultPermission = "none"
+local DefaultPermission = "none"	-- Sets the default DP mode to 'none'
 local ModeDescTxt
-local ModeDescDefault = "Can't find any info for this mode!"
-local currentMode
+local ModeDescDefault = "Can't find any info for this mode!"	-- String to display if no mode description is found
+local currentMode	-- Empty variable for the current DP mode
 local currentModeTxt = "\nThe current damage permission mode is %s."
 local introTxt = "Damage Permission Modes change the way that ACF damage works.\n\nYou can change the DP mode if you are an admin."
 local list 
 
+
+function Permissions:Update()
+
+	if list then	
+		for id,line in pairs(list:GetLines()) do
+			if line:GetValue(1) == CurrentPermission then
+				list:GetLine(id):SetValue(2,"Yes")
+			else
+				list:GetLine(id):SetValue(2,"")
+			end
+			if line:GetValue(1) == DefaultPermission then
+				list:GetLine(id):SetValue(3,"Yes")
+			else
+				list:GetLine(id):SetValue(3,"")
+			end
+		end
+	end
+	
+	if currentMode then
+		currentMode:SetText(string.format(currentModeTxt, CurrentPermission))
+		currentMode:SizeToContents()
+	end
+	
+end
+
+function Permissions:RequestUpdate()
+	net.Start("ACF_refreshpermissions")
+		net.WriteBit(true)	
+	net.SendToServer()
+end
 
 
 net.Receive("ACF_refreshpermissions", function(len)
@@ -37,6 +73,7 @@ net.Receive("ACF_refreshpermissions", function(len)
 	Permissions:Update()
 	
 end)
+
 
 
 function Menu.MakePanel(Panel)
@@ -68,13 +105,13 @@ function Menu.MakePanel(Panel)
 	
 	if LocalPlayer():IsAdmin() then
 	
-		/*
+		--[[
 		local pmhelp = Panel:Help("Change Permission Mode")
 		pmhelp:SetContentAlignment( TEXT_ALIGN_CENTER )
 		pmhelp:SetAutoStretchVertical(false)
 		pmhelp:SetFont("DermaDefaultBold")
 		pmhelp:SizeToContents()
-		//*/
+		]]--
 
 		list = vgui.Create("DListView")
 		list:AddColumn("Mode")
@@ -154,38 +191,6 @@ function Menu.MakePanel(Panel)
 		Panel:AddItem(button2)
 	
 	end
-end
-
-
-function Permissions:Update()
-
-	if list then	
-		for id,line in pairs(list:GetLines()) do
-			if line:GetValue(1) == CurrentPermission then
-				list:GetLine(id):SetValue(2,"Yes")
-			else
-				list:GetLine(id):SetValue(2,"")
-			end
-			if line:GetValue(1) == DefaultPermission then
-				list:GetLine(id):SetValue(3,"Yes")
-			else
-				list:GetLine(id):SetValue(3,"")
-			end
-		end
-	end
-	
-	if currentMode then
-		currentMode:SetText(string.format(currentModeTxt, CurrentPermission))
-		currentMode:SizeToContents()
-	end
-	
-end
-
-
-function Permissions:RequestUpdate()
-	net.Start("ACF_refreshpermissions")
-		net.WriteBit(true)	
-	net.SendToServer()
 end
 
 
