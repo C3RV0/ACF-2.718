@@ -1,19 +1,24 @@
+--[[
+	Menu GUI used by the "ACF Menu" tool
+	This is where the gun, ammo, and mobility entities can be selected and spawned.
+]]--
 
 function PANEL:Init( )
-
+	
+	-- Creates variable representing the panel
 	acfmenupanel = self.Panel
 	
-	// height
-	
-	
+	-- Sets the height of the gui
 	self:SetTall( surface.ScreenHeight() - 120 )
 	
-	//Weapon Select	
-	
+	-- Weapon Select	
 	self.WeaponSelect = vgui.Create( "DTree", self )
-
+	
+	
 	self.WeaponData = ACF.Weapons
 	
+	
+	-- Gets classes from "acfloader.lua"
 	local Classes = list.Get("ACFClasses")
 	self.Classes = {}
 	for ID,Table in pairs(Classes) do
@@ -25,6 +30,8 @@ function PANEL:Init( )
 		table.sort(self.Classes[ID], function(a,b) return a.id < b.id end )
 	end
 	
+	
+	-- Gets the gun, ammo and mobility entities also from "acfloader.lua"
 	local WeaponDisplay = list.Get("ACFEnts")
 	self.WeaponDisplay = {}
 	for ID,Table in pairs(WeaponDisplay) do
@@ -41,6 +48,7 @@ function PANEL:Init( )
 		
 	end
 	
+	
 	local HomeNode = self.WeaponSelect:AddNode( "ACF Home" )
 	HomeNode.mytable = {}
 		HomeNode.mytable.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
@@ -50,6 +58,8 @@ function PANEL:Init( )
 	end
 	HomeNode.Icon:SetImage( "icon16/newspaper.png" )
 	
+	
+	-- Gets list of roundtypes (they are invidividually added to the list in each file for some reason)
 	local RoundAttribs = list.Get("ACFRoundTypes")
 	self.RoundAttribs = {}
 	for ID,Table in pairs(RoundAttribs) do
