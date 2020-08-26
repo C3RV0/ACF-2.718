@@ -1,4 +1,7 @@
-8/24/2020:
- - Project start
- - Added comments and restructured "cl_acfsetpermission.lua" to increase readability
- - Added comments in "cl_acfballistics.lua" to increase readability
+*r8/25/2020:
+- Added comments to "cl_acfmenu_gui.lua" to increase readability
+
+*r8/24/2020:
+- Project start
+- Added comments and restructured "cl_acfsetpermission.lua" to increase readability
+- Added comments in "cl_acfballistics.lua" to increase readability
