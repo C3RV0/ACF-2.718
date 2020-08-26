@@ -1,6 +1,6 @@
 --[[
 	Menu GUI used by the "ACF Menu" tool
-	This is where the gun, ammo, and mobility entities can be selected and spawned.
+	This is where the gun, ammo, and mobility entities can be selected and spawned. It also handles the sliders and such.
 ]]--
 
 function PANEL:Init( )
@@ -68,6 +68,7 @@ function PANEL:Init( )
 	end
 	table.sort(self.RoundAttribs, function(a,b) return a.id < b.id end )
 	
+	-- Creates table for the Guns folder
 	local Guns = self.WeaponSelect:AddNode( "Guns" )
 	for ClassID,Class in pairs(self.Classes["GunClass"]) do
 	
@@ -86,7 +87,8 @@ function PANEL:Init( )
 		end
 		
 	end
-
+	
+	-- Creates table for the Ammo folder
 	local Ammo = self.WeaponSelect:AddNode( "Ammo" )
 	for AmmoID,AmmoTable in pairs(self.RoundAttribs) do
 		
@@ -100,6 +102,7 @@ function PANEL:Init( )
 		
 	end
 	
+	-- Creates table for the Mobility folder
 	local Mobility = self.WeaponSelect:AddNode( "Mobility" )
 	local Engines = Mobility:AddNode( "Engines" )
 	local Gearboxes = Mobility:AddNode( "Gearboxes" )
@@ -125,6 +128,7 @@ function PANEL:Init( )
 		end
 	end
 	
+	-- Creates table for the Mobility folder
 	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		
 		local NodeAdd = Mobility
@@ -159,9 +163,8 @@ function PANEL:Init( )
 
 	end
 	
-	
-
-	/*local Missiles = self.WeaponSelect:AddNode( "Missiles" )
+	--[[
+	local Missiles = self.WeaponSelect:AddNode( "Missiles" )
 	for MisID, MisTable in pairs(self.WeaponDisplay["Missiles"]) do
 
 		local EndNode = Missiles:AddNode( MisTable.name or "No Name" )
@@ -174,25 +177,27 @@ function PANEL:Init( )
     
 		EndNode.Icon:SetImage( "icon16/newspaper.png")
     
-	end*/
-	-- local Sensors = self.WeaponSelect:AddNode( "Sensors" )
-	-- for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do
+	end
+	
+	local Sensors = self.WeaponSelect:AddNode( "Sensors" )
+	for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do
 		
-		-- local EndNode = Sensors:AddNode( SensorsTable.name or "No Name" )
-		-- EndNode.mytable = SensorsTable
-		-- function EndNode:DoClick()
-			-- RunConsoleCommand( "acfmenu_type", self.mytable.type )
-			-- acfmenupanel:UpdateDisplay( self.mytable )
-		-- end
-		-- EndNode.Icon:SetImage( "icon16/newspaper.png" )
+		local EndNode = Sensors:AddNode( SensorsTable.name or "No Name" )
+		EndNode.mytable = SensorsTable
+		function EndNode:DoClick()
+			RunConsoleCommand( "acfmenu_type", self.mytable.type )
+			acfmenupanel:UpdateDisplay( self.mytable )
+		end
+		EndNode.Icon:SetImage( "icon16/newspaper.png" )
 		
-	-- end
+	end
+	]]--
 	
 end
 
-/*------------------------------------
+--[[---------------------------
 	Think
-------------------------------------*/
+---------------------------]]--
 function PANEL:Think( )
 
 end
@@ -207,6 +212,7 @@ function PANEL:UpdateDisplay( Table )
 		acfmenupanel.CustomDisplay = nil
 		acfmenupanel.CData = nil
 	end
+	
 	--Create the space to display the custom data
 	acfmenupanel.CustomDisplay = vgui.Create( "DPanelList", acfmenupanel )	
 		acfmenupanel.CustomDisplay:SetSpacing( 10 )
@@ -227,6 +233,7 @@ function PANEL:UpdateDisplay( Table )
 
 end
 
+
 function PANEL:CreateAttribs( Table )
 	--You overwrite this with your own function, defined in the ammo definition file, so each ammotype creates it's own menu
 end
@@ -234,6 +241,7 @@ end
 function PANEL:UpdateAttribs( Table )
 	--You overwrite this with your own function, defined in the ammo definition file, so each ammotype creates it's own menu
 end
+
 
 function PANEL:PerformLayout()
 	
@@ -255,11 +263,13 @@ function PANEL:PerformLayout()
 	
 end
 
+
+-- Creates the ACF menu display
 function ACFHomeGUICreate( Table )
 
 	if not acfmenupanel.CustomDisplay then return end
-	--start version
 	
+	-- Checks if the version of ACF is up to date
 	acfmenupanel["CData"]["VersionInit"] = vgui.Create( "DLabel" )
 	versiontext = "Version\n\n".."Git Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version
 	acfmenupanel["CData"]["VersionInit"]:SetText(versiontext)	
@@ -287,8 +297,9 @@ function ACFHomeGUICreate( Table )
 	acfmenupanel["CData"]["VersionText"]:SizeToContents() 
 	
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["VersionText"] )
-	-- end version
 	
+	
+	-- Creates the changelog box
 	acfmenupanel:CPanelText("Header", "Changelog")
 	
 	if acfmenupanel.Changelog then
@@ -315,11 +326,14 @@ function ACFHomeGUICreate( Table )
 	
 end
 
+
+-- Updates the ACF menu
 function ACFHomeGUIUpdate( Table )
 	
 	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
 	acfmenupanel.CustomDisplay:PerformLayout()
 	
+	-- Also checks if the version of ACF is up to date
 	local color
 	local versionstring
 	if ACF.Version >= ACF.CurrentVersion then
@@ -338,6 +352,8 @@ function ACFHomeGUIUpdate( Table )
 	
 end
 
+
+-- Checks for any updates to the Changelog
 function ACFChangelogHTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
 	
@@ -353,7 +369,8 @@ function ACFChangelogHTTPCallBack(contents , size)
 	acfmenupanel:UpdateDisplay( Table )
 	
 end
-http.Fetch("http://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelogHTTPCallBack, function() end)
+http.Fetch("https://raw.githubusercontent.com/C3RV0/ACF-2.718/master/changelog.txt", ACFChangelogHTTPCallBack, function() end)
+
 
 function PANEL:AmmoSelect( Blacklist )
 	
@@ -367,8 +384,9 @@ function PANEL:AmmoSelect( Blacklist )
 			acfmenupanel.AmmoData["Data"] = acfmenupanel.WeaponData["Guns"]["12.7mmMG"]["round"]
 	end
 	
-	--Creating the ammo crate selection
-	acfmenupanel.CData.CrateSelect = vgui.Create( "DComboBox", acfmenupanel.CustomDisplay )	--Every display and slider is placed in the Round table so it gets trashed when selecting a new round type
+	-- Creating the ammo crate selection
+	-- Every display and slider is placed in the Round table so it gets trashed when selecting a new round type
+	acfmenupanel.CData.CrateSelect = vgui.Create( "DComboBox", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.CrateSelect:SetSize(100, 30)
 		for Key, Value in pairs( acfmenupanel.WeaponDisplay["Ammo"] ) do
 			acfmenupanel.CData.CrateSelect:AddChoice( Value.id , Key )
@@ -382,7 +400,7 @@ function PANEL:AmmoSelect( Blacklist )
 		RunConsoleCommand( "acfmenu_id", acfmenupanel.AmmoData["Id"] )
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.CrateSelect )
 	
-	--Create the caliber selection display
+	-- Create the caliber selection display
 	acfmenupanel.CData.CaliberSelect = vgui.Create( "DComboBox", acfmenupanel.CustomDisplay )	
 		acfmenupanel.CData.CaliberSelect:SetSize(100, 30)
 		for Key, Value in pairs( acfmenupanel.WeaponDisplay["Guns"] ) do
@@ -400,8 +418,10 @@ function PANEL:AmmoSelect( Blacklist )
 
 end
 
-function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variable name in the table, Value, Min value, Max Value, slider text title, slider decimeals, description text below slider 
 
+-- Variable name in the table, Value, Min value, Max Value, slider text title, slider decimals, description text below slider 
+function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) 
+	
 	if not acfmenupanel["CData"][Name] then
 		acfmenupanel["CData"][Name] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel["CData"][Name].Label:SetSize( 0 ) --Note : this is intentional 
@@ -442,8 +462,10 @@ function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variab
 	
 end
 
-function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, slider text title, slider decimeals, description text below slider 
 
+-- Variable name in the table, slider text title, slider decimeals, description text below slider
+function PANEL:AmmoCheckbox(Name, Title, Desc)
+	
 	if not acfmenupanel["CData"][Name] then
 		acfmenupanel["CData"][Name] = vgui.Create( "DCheckBoxLabel" )
 			acfmenupanel["CData"][Name]:SetText( Title or "" )
@@ -474,6 +496,7 @@ function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, sli
 	acfmenupanel["CData"][Name.."_text"]:SizeToContentsX()
 	
 end
+
 
 function PANEL:CPanelText(Name, Desc)
 
