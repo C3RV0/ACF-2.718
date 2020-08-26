@@ -1,3 +1,6 @@
+*r0003 8/26/2020
+- Added comments to "cl_acfpermission.lua" to increase readability
+
 *r0002 8/25/2020
 - Added comments to "cl_acfmenu_gui.lua" to increase readability
 - Fixed typo in "smoothbore.lua"
