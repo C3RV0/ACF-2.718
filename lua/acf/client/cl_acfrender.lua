@@ -1,9 +1,15 @@
+--[[
+	This is where the ACF damage texture rendering is handled.
+	There was a variable typo for some odd reason. Before: `ent.ACF_HelathPercent` and After: `ent.ACFHealthPercent`. Very dumb.Q
+]]--
+
 local Damaged = {
 	CreateMaterial("ACF_Damaged1", "VertexLitGeneric", {["$basetexture"] = "damaged/damaged1"}),
 	CreateMaterial("ACF_Damaged2", "VertexLitGeneric", {["$basetexture"] = "damaged/damaged2"}),
 	CreateMaterial("ACF_Damaged3", "VertexLitGeneric", {["$basetexture"] = "damaged/damaged3"})
 }
 
+-- This is where the material is drawn over the entity
 hook.Add("PostDrawOpaqueRenderables", "ACF_RenderDamage", function()
 	if not ACF_HealthRenderList then return end
     cam.Start3D( EyePos(), EyeAngles() )
@@ -11,7 +17,7 @@ hook.Add("PostDrawOpaqueRenderables", "ACF_RenderDamage", function()
 			--if ent:EntIndex() == 227 then print(  ent.ACF_Material ) end
 			if IsValid(ent) then
 				render.ModelMaterialOverride( ent.ACF_Material )
-				render.SetBlend(math.Clamp(1- ent.ACF_HelathPercent,0,0.8))
+				render.SetBlend(math.Clamp(1- ent.ACF_HealthPercent,0,0.8))
 				ent:DrawModel()
 			elseif ACF_HealthRenderList then
 				table.remove(ACF_HealthRenderList,k)
@@ -22,6 +28,7 @@ hook.Add("PostDrawOpaqueRenderables", "ACF_RenderDamage", function()
 	cam.End3D()
 end)
 
+-- This is the net message for when the health of the entity changes
 net.Receive("ACF_RenderDamage", function()
 	local Table = net.ReadTable()
 	for k,v in ipairs( Table ) do
@@ -30,12 +37,13 @@ net.Receive("ACF_RenderDamage", function()
 		if Health != MaxHealth then
 			ent.ACF_Health = Health
 			ent.ACF_MaxHealth = MaxHealth
-			ent.ACF_HelathPercent = (Health/MaxHealth)
-			if ent.ACF_HelathPercent > 0.7 then
+			-- Gets the ratio of health to the original health
+			ent.ACF_HealthPercent = (Health/MaxHealth)
+			if ent.ACF_HealthPercent > 0.7 then
 				ent.ACF_Material = Damaged[1]
-			elseif ent.ACF_HelathPercent > 0.3 then
+			elseif ent.ACF_HealthPercent > 0.3 then
 				ent.ACF_Material = Damaged[2]
-			elseif ent.ACF_HelathPercent <= 0.3 then
+			elseif ent.ACF_HealthPercent <= 0.3 then
 				ent.ACF_Material = Damaged[3]
 			end
 			ACF_HealthRenderList = ACF_HealthRenderList or {}
