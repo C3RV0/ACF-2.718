@@ -1,6 +1,6 @@
 --[[
 	This is where the ACF damage texture rendering is handled.
-	There was a variable typo for some odd reason. Before: `ent.ACF_HelathPercent` and After: `ent.ACFHealthPercent`. Very dumb.Q
+	There was a variable typo for some odd reason. Before: `ent.ACF_HelathPercent` and After: `ent.ACFHealthPercent`. Very dumb.
 ]]--
 
 local Damaged = {
