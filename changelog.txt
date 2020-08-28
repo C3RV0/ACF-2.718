@@ -1,3 +1,6 @@
+*r0004 8/28/2020
+- Added comments to "acf_pmode_battle.lua" to increase readability
+
 *r0003 8/26/2020
 - Added comments to "cl_acfpermission.lua" to increase readability
 - Added comments, restructured the code, and fixed a typo in "cl_acfrender.lua" to increase readability
