@@ -1,7 +1,9 @@
--- init
+--[[ START INIT ]]--
+
 ACF.Bullet = {}	--when ACF is loaded, this table holds bullets
 ACF.CurBulletIndex = 0	--used to track where to insert bullets
 ACF.BulletIndexLimt = 1000  --The maximum number of bullets in flight at any one time. oldest existing bullets are overwritten if limit overflow
+-- Note: Make this a setting in the ACF tab
 
 ACF.TraceFilter = { --entities that cause issue with acf and should be not be processed at all
 	prop_vehicle_crane = true,
@@ -9,12 +11,16 @@ ACF.TraceFilter = { --entities that cause issue with acf and should be not be pr
 	}
 ACF.SkyboxGraceZone = 100 --grace zone for the high angle fire
 
--- optimization; reuse tables for ballistics traces
+-- Optimization; reuse tables for ballistics traces
 local FlightRes = { }
 local FlightTr = { output = FlightRes }
--- end init
 
---creates a new bullet being fired
+--[[ END INIT ]]--
+
+
+
+-- BULLET FUNCTION
+-- Creates a new bullet being fired
 function ACF_CreateBullet( BulletData )
 	
 	ACF.CurBulletIndex = ACF.CurBulletIndex + 1		--Increment the index
@@ -22,7 +28,7 @@ function ACF_CreateBullet( BulletData )
 		ACF.CurBulletIndex = 1
 	end
 	
-	--Those are BulletData settings that are global and shouldn't change round to round
+	-- Those are BulletData settings that are global and shouldn't change round to round
 	local cvarGrav = GetConVar("sv_gravity")
 	BulletData["Accel"] = Vector(0,0,cvarGrav:GetInt()*-1)
 	BulletData["LastThink"] = ACF.SysTime
@@ -39,7 +45,8 @@ function ACF_CreateBullet( BulletData )
 		end
 	end
 	
-	--Check the Gun's velocity and add a modifier to the flighttime so the traceback system doesn't hit the originating contraption if it's moving along the shell path
+	-- Checks the Gun's velocity and add a modifier to the flighttime so the traceback system doesn't
+	-- hit the originating contraption if it's moving along the shell path
 	if BulletData["Gun"]:IsValid() then
 		BulletData["TraceBackComp"] = math.max(ACF_GetPhysicalParent(BulletData["Gun"]):GetPhysicsObject():GetVelocity():Dot(BulletData["Flight"]:GetNormalized()),0)
 		--print(BulletData["TraceBackComp"])
@@ -56,7 +63,7 @@ function ACF_CreateBullet( BulletData )
 	
 end
 
---global update function where acf updates ALL bullets at once--this runs once per tick, handling bullet physics for all bullets in table.
+-- Global update function where acf updates ALL bullets at once--this runs once per tick, handling bullet physics for all bullets in table.
 function ACF_ManageBullets()
 	for Index,Bullet in pairs(ACF.Bullet) do
 		if not Bullet.HandlesOwnIteration then
@@ -67,20 +74,22 @@ end
 
 hook.Add("Tick", "ACF_ManageBullets", ACF_ManageBullets)
 
---removes the bullet from acf
+-- Removes the bullet from acf
 function ACF_RemoveBullet( Index )
 	local Bullet = ACF.Bullet[Index]
 	ACF.Bullet[Index] = nil
 	if Bullet and Bullet.OnRemoved then Bullet:OnRemoved() end
 end
 
---checks the visclips of an entity, to determine if round should pass through or not
--- ignores anything that's not a prop (acf components, seats) or with nil volume (makesphere props)
+-- Checks the visclips of an entity, to determine if Bullet should pass through or not
 function ACF_CheckClips( Ent, HitPos )
-	if not IsValid(Ent) or (Ent.ClipData == nil)
-		or (not (Ent:GetClass() == "prop_physics"))
+	-- Ignores anything that's not a prop (acf components, seats) or with nil volume (makesphere props)
+	if not IsValid(Ent)
+		or (Ent.ClipData == nil)
+		or (not (Ent:GetClass() == "prop_physics")) -- props
 		or (Ent:GetPhysicsObject():GetVolume() == nil) -- makesphere
-		then return false end
+		then return false
+	end
 
 	local normal
 	local origin
@@ -94,9 +103,9 @@ function ACF_CheckClips( Ent, HitPos )
 	return false
 end
 
---handles non-terminal ballistics and fusing of bullets
+-- Handles non-terminal ballistics and fusing of bullets
 function ACF_CalcBulletFlight( Index, Bullet, BackTraceOverride )
-	-- perf concern: use direct function call stored on bullet over hook system.
+	-- perf concern: Uses direct function call stored on bullet over hook system.
 	if Bullet.PreCalcFlight then Bullet:PreCalcFlight() end
 	
 	if not Bullet.LastThink then ACF_RemoveBullet( Index ) end
@@ -104,7 +113,7 @@ function ACF_CalcBulletFlight( Index, Bullet, BackTraceOverride )
 	if BackTraceOverride then Bullet.FlightTime = 0 end
 	local DeltaTime = ACF.SysTime - Bullet.LastThink
 	
-	--actual motion of the bullet
+	-- Actual motion of the bullet
 	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * Bullet.Flight:LengthSqr()) / ACF.DragDiv
 	Bullet.NextPos = Bullet.Pos + (Bullet.Flight * ACF.VelScale * DeltaTime)		--Calculates the next shell position
 	Bullet.Flight = Bullet.Flight + (Bullet.Accel - Drag)*DeltaTime				--Calculates the next shell vector
@@ -124,11 +133,11 @@ function ACF_CalcBulletFlight( Index, Bullet, BackTraceOverride )
 	
 	ACF_DoBulletsFlight( Index, Bullet )
 
-	-- perf concern: use direct function call stored on bullet over hook system.
+	-- perf concern: Uses direct function call stored on bullet over hook system.
 	if Bullet.PostCalcFlight then Bullet:PostCalcFlight() end
 end
 
---handles bullet terminal ballistics, fusing, and visclip checking
+-- Handles bullet terminal ballistics, fusing, and visclip checking
 function ACF_DoBulletsFlight( Index, Bullet )
 	local CanDo = hook.Run("ACF_BulletsFlight", Index, Bullet )
 	if CanDo == false then return end
@@ -147,15 +156,15 @@ function ACF_DoBulletsFlight( Index, Bullet )
 		end
 	end
 
-	--if we're out of skybox, keep calculating position.  If we have too long out of skybox, remove bullet
+	-- If we're out of skybox, keep calculating position.  If we have too long out of skybox, remove bullet
 	if Bullet.SkyLvL then
-		--We don't want to calculate bullets that will never come back to map
+		-- We don't want to calculate bullets that will never come back to map
 		if (ACF.CurTime - Bullet.LifeTime) > 30 then
 			ACF_RemoveBullet( Index )
 			return
 		end
-		--We don't want rounds to hit the skybox top, but to pass through and come back down
-		if Bullet.NextPos.z + ACF.SkyboxGraceZone > Bullet.SkyLvL then --add in a bit of grace zone
+		-- We don't want rounds to hit the skybox top, but to pass through and come back down
+		if Bullet.NextPos.z + ACF.SkyboxGraceZone > Bullet.SkyLvL then -- Adds in a bit of grace zone
 			Bullet.Pos = Bullet.NextPos
 			return
 		--We do want rounds outside of the world but not skybox top to be deleted
@@ -185,16 +194,16 @@ function ACF_DoBulletsFlight( Index, Bullet )
 	FlightTr.mask = Bullet.Caliber <= 0.3 and MASK_SHOT or MASK_SOLID -- cals 30mm and smaller will pass through things like chain link fences
 	FlightTr.filter = Bullet.Filter -- any changes to bullet filter will be reflected in the trace
 	
-	--perform the trace for damage
+	-- Perform the trace for damage
 	local RetryTrace = true
-	while RetryTrace do			--if trace hits clipped part of prop, add prop to trace filter and retry
+	while RetryTrace do			-- If trace hits clipped part of prop, add prop to trace filter and retry
 		RetryTrace = false
 		FlightTr.start = Bullet.StartTrace
-		FlightTr.endpos = Bullet.NextPos + Bullet.Flight:GetNormalized()*(ACF.PhysMaxVel * 0.025) --compensation
-		util.TraceLine(FlightTr) -- trace result is stored in supplied output FlightRes (at top of file)
+		FlightTr.endpos = Bullet.NextPos + Bullet.Flight:GetNormalized()*(ACF.PhysMaxVel * 0.025)	-- Compensation
+		util.TraceLine(FlightTr) 	-- Trace result is stored in supplied output FlightRes (at top of file)
 		--util.TraceHull(FlightTr)
 		
-		--We hit something that's not world, if it's visclipped, filter it out and retry
+		-- If the Bullet hits something that's not world, if it's visclipped, it filter out the prop and retries
 		if FlightRes.HitNonWorld and ACF_CheckClips( FlightRes.Entity, FlightRes.HitPos ) then
 			table.insert( Bullet.Filter , FlightRes.Entity )
 			RetryTrace = true
