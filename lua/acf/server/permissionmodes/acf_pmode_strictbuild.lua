@@ -1,26 +1,26 @@
-/**
+--[[
 	ACF Permission mode: Strict Build
 		This mode blocks all damage to entities without the owner's permission.
 		Owners can permit damage from specific players.
 		Players and NPCs are also protected in this mode.
 		This mode requires a CPPI-compatible prop-protector to function properly.
-//*/
+]]--
 
 if not ACF or not ACF.Permissions or not ACF.Permissions.RegisterMode then error("ACF: Tried to load the " .. modename .. " permission-mode before the permission-core has loaded!") end
 local perms = ACF.Permissions
 
 
-// the name for this mode used in commands and identification
+-- The name for this mode used in commands and identification
 local modename = "strictbuild"
 
-// a short description of what the mode does
+-- A short description of what the mode does
 local modedescription = "Disables all ACF damage unless the owner permits it. PvP is disallowed."
 
-// if the attacker or victim can't be identified, what should we do?  true allows damage, false blocks it.
+-- If the attacker or victim can't be identified, what should we do?  true allows damage, false blocks it.
 local DefaultPermission = false
 
 
-/*
+--[[
 	Defines the behaviour of ACF damage protection under this protection mode.
 	This function is called every time an entity can be affected by potential ACF damage.
 	Args;
@@ -29,7 +29,7 @@ local DefaultPermission = false
 		ent			Entity:	The entity which may be damaged.
 	Return: boolean
 		true if the entity should be damaged, false if the entity should be protected from the damage.
-//*/
+]]--
 local function modepermission(owner, attacker, ent)
 	
 	if not (owner.SteamID or attacker.SteamID) then
