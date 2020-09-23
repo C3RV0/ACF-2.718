@@ -1,12 +1,12 @@
 --V10s
 
 ACF_DefineEngine( "4.3-V10", {
-	name = "4.3L V10 Petrol",
-	desc = "Small-block V-10 gasoline engine, great for powering a hot rod lincoln",
+	name = "4.3L V10",
+	desc = "Small-block V-10 engine, great for powering a hot rod lincoln",
 	model = "models/engines/v10sml.mdl",
 	sound = "acf_engines/v10_petrolsmall.wav",
 	category = "V10",
-	fuel = "Petrol",
+	fuel = "Multifuel",
 	enginetype = "GenericPetrol",
 	weight = 160,
 	torque = 288,
@@ -18,12 +18,12 @@ ACF_DefineEngine( "4.3-V10", {
 } )
 
 ACF_DefineEngine( "8.0-V10", {
-	name = "8.0L V10 Petrol",
-	desc = "Beefy 10-cylinder gas engine, gets 9 kids to soccer practice",
+	name = "8.0L V10",
+	desc = "Beefy 10-cylinder engine, gets 9 kids to soccer practice",
 	model = "models/engines/v10med.mdl",
 	sound = "acf_engines/v10_petrolmedium.wav",
 	category = "V10",
-	fuel = "Petrol",
+	fuel = "Multifuel",
 	enginetype = "GenericPetrol",
 	weight = 300,
 	torque = 490,
@@ -35,8 +35,8 @@ ACF_DefineEngine( "8.0-V10", {
 } )
 
 ACF_DefineEngine( "22.0-V10", {
-	name = "22.0L V10 Multifuel",
-	desc = "Heavy multifuel V-10, gearbox-shredding torque but very heavy.",
+	name = "22.0L V10",
+	desc = "Heavy V-10, gearbox-shredding torque but very heavy.",
 	model = "models/engines/v10big.mdl",
 	sound = "acf_engines/v10_diesellarge.wav",
 	category = "V10",
