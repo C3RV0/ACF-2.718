@@ -1,5 +1,5 @@
 *r0006 9/23/2020
-- All non-electric engines now use multifuel
+- All non-electric engines will now use multifuel
 - Added RPMBoost multiplier to "acf_globals.lua"
 - Improved MaxRPM for Ground Turbines
 
